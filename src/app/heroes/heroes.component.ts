@@ -1,40 +1,54 @@
-import { Component, OnInit } from '@angular/core';
-
+import { Component } from '@angular/core';
+import { Store, select } from '@ngrx/store';
 import { Hero } from '../hero';
 import { HeroService } from '../hero.service';
 import { MessageService } from '../message.service';
+import { AppState } from '../../app/app-state';
+import { appendHero, replaceHero, deleteHero, editHero, cancelHero } from '../store/heroes/heroes.actions';
+
 
 @Component({
   selector: 'app-heroes',
   templateUrl: './heroes.component.html',
   styleUrls: ['./heroes.component.css']
 })
-export class HeroesComponent implements OnInit {
+export class HeroesComponent {
 
+  heroes$ = this.store.pipe(select(state => state.heroes))
+  editHeroId$ = this.store.pipe(select('editHeroId'));
+  // heroes: Hero[] = [];
 
-  heroes: Hero[] = [];
+  constructor(private store: Store<AppState>, private messageService: MessageService) { }
 
-  constructor(private heroService: HeroService, private messageService: MessageService) { }
-
-  ngOnInit(): void {
-    this.getHeroes();
+  add(name: string) {
+    console.log(this.heroes$)
+    this.store.dispatch(appendHero({ name }))
   }
 
-  getHeroes(): void {
-    this.heroService.getHeroes()
-        .subscribe(heroes => this.heroes = heroes);
+  delete(heroId: number) {
+    this.store.dispatch(deleteHero({ heroId }))
   }
 
-  add(name: string): void {
-    name = name.trim();
-    if (!name) { return; }
-    this.heroService.addHero({ name } as Hero)
-      .subscribe(hero => {
-        this.heroes.push(hero);
-      });
-  }
-  delete(hero: Hero): void {
-    this.heroes = this.heroes.filter(h => h !== hero);
-    this.heroService.deleteHero(hero.id).subscribe();
-  }
+  // ngOnInit(): void {
+  //   this.getHeroes();
+  // }
+
+  // getHeroes(): void {
+  //   this.heroService.all().subscribe(heroes => this.heroes = heroes);
+  //   this.store.dispatch(getHeroes())
+  // }
+
+  // add(name: string): void {
+  //   name = name.trim();
+  //   if (!name) { return; }
+  //   this.heroService.append({ name } as Hero)
+  //     .subscribe(hero => {
+  //       this.heroes.push(hero);
+  //     });
+  // }
+  
+  // delete(hero: Hero): void {
+  //   this.heroes = this.heroes.filter(h => h !== hero);
+  //   this.heroService.delete(hero.id).subscribe();
+  // }
 }

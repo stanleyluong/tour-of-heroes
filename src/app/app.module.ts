@@ -17,6 +17,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 // import { environment } from '../environments/environment';
 import { CounterComponent } from './counter/counter.component'
+import { editHeroIdReducer, heroesReducer } from './store/heroes/heroes.reducer';
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,11 +29,10 @@ import { CounterComponent } from './counter/counter.component'
     CounterComponent
   ],
   imports: [
-    HttpClientModule,
-
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.
     // Remove it when a real server is ready to receive requests.
+    HttpClientModule,
     HttpClientInMemoryWebApiModule.forRoot(
       InMemoryDataService, { dataEncapsulation: false }
     ),
@@ -41,7 +41,11 @@ import { CounterComponent } from './counter/counter.component'
     FormsModule,
     AppRoutingModule,
     EffectsModule.forRoot([]),
-    StoreModule.forRoot(reducers, { metaReducers }),
+    // StoreModule.forRoot(reducers, { metaReducers }),
+    StoreModule.forRoot({
+      heroes: heroesReducer,
+      editHeroId: editHeroIdReducer
+    }),
     StoreDevtoolsModule.instrument({ }),
   ],
   providers: [],
