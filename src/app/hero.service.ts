@@ -16,8 +16,8 @@ export class HeroService {
   constructor( private httpClient: HttpClient, private messageService: MessageService) { }  
   /** Log a HeroService message with the MessageService */
   // private heroesUrl = 'api/heroes';  // URL to web api
-  // _baseUrl = 'http://localhost:3000/heroes'
-  _baseUrl = 'api/heroes'
+  _baseUrl = 'http://localhost:3000/heroes'
+  // _baseUrl = 'api/heroes'
   private getCollectionUrl(){
     return this._baseUrl
   }
@@ -56,6 +56,7 @@ export class HeroService {
   }
 
   append(name: string) {
+    console.log('appending', name)
     return this.httpClient.post<Hero>(this.getCollectionUrl(), name)
     .pipe(
           tap((newHero: Hero) => this.log(`added hero w/ id=${newHero.id}`)),

@@ -1,6 +1,7 @@
-<div *ngIf="hero">
+<div *ngIf="hero$ | async as hero">
+  <!-- async pipe will auto subscribe/unsubscribe -->
     <h2>{{hero.name | uppercase}} Details</h2>
-    <div><span>id: </span>{{hero.id}}</div>
+    <div><span>id: </span>{{ heroId$ | async }}</div>
     <div>
       <label for="hero-name">Hero name: </label>
       <input id="hero-name" [(ngModel)]="hero.name" placeholder="name">

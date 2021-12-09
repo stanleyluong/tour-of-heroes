@@ -19,6 +19,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { HeroService } from './hero.service';
 import { CounterComponent } from './counter/counter.component'
 import { editHeroIdReducer, heroesReducer } from './store/heroes/heroes.reducer';
+import { counterReducer } from './store/counter/counter.reducer';
 @NgModule({
   declarations: [
     AppComponent,
@@ -45,7 +46,8 @@ import { editHeroIdReducer, heroesReducer } from './store/heroes/heroes.reducer'
     // StoreModule.forRoot(reducers, { metaReducers }),
     StoreModule.forRoot({
       heroes: heroesReducer,
-      editHeroId: editHeroIdReducer
+      editHeroId: editHeroIdReducer,
+      count: counterReducer
     }),
     StoreDevtoolsModule.instrument({ }),
   ],

@@ -1,15 +1,18 @@
-import { createReducer, on } from "@ngrx/store";
-import { appendHero, replaceHero, deleteHero, editHero, cancelHero, getHeroes } from './heroes.actions'
+import { createReducer, createSelector, on } from "@ngrx/store";
+import { appendHero, replaceHero, deleteHero, editHero, cancelHero, setHeroesAction } from './heroes.actions'
 import { Hero } from "src/app/hero";
 import { HeroService } from '../../hero.service'; 
+import { AppState } from "src/app/app-state";
 
 export const initialState: Hero[] = [
     // { id: 1, name: "x"}
 ];
-
+//reducers to update state, selectors to get state, actions dispatched to tell system you want ot do something with action
 export const heroesReducer = createReducer<Hero[]>(
     initialState, 
-    on(getHeroes, (state, action) => {
+    //ambiguous, getHeroesAction
+    //setHeroes?
+    on(setHeroesAction, (state, action) => {
         return [...action.heroes]
     }),
     on(appendHero, (state, action) => state.concat({
@@ -37,3 +40,11 @@ export const editHeroIdReducer = createReducer<number>(-1,
     on(cancelHero, () => -1),
 
 )
+
+export const selectHeroes = (state:AppState) => {
+    return state.heroes
+}
+
+// export const selectAllHeroes = createSelector((state) => {
+//     return state.heroes
+// })

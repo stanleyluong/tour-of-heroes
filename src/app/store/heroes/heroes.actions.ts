@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store'
 import { Hero } from 'src/app/hero'
-export const getHeroes = createAction('[Heroes API] API Success', props<{ heroes: Hero[] }>())
+export const setHeroesAction = createAction('[Heroes API] API Success', props<{ heroes: Hero[] }>())
 export const getHero = createAction('[Hero] Get Hero', props<{ heroId: number }>())
 export const appendHero = createAction('[Hero] Append Hero', props<{ name: string }>())
 export const replaceHero = createAction('[Hero] Replace Hero', props<{ hero: Hero }>())
