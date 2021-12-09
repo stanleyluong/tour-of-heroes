@@ -1,22 +1,17 @@
 import { createReducer, on } from "@ngrx/store";
+import { appendHero, replaceHero, deleteHero, editHero, cancelHero, getHeroes } from './heroes.actions'
 import { Hero } from "src/app/hero";
-import { appendHero, replaceHero, deleteHero, editHero, cancelHero } from './heroes.actions'
+import { HeroService } from '../../hero.service'; 
 
 export const initialState: Hero[] = [
-    { id: 11, name: 'Dr Nice' },
-    { id: 12, name: 'Narco' },
-    { id: 13, name: 'Bombasto' },
-    { id: 14, name: 'Celeritas' },
-    { id: 15, name: 'Magneta' },
-    { id: 16, name: 'RubberMan' },
-    { id: 17, name: 'Dynama' },
-    { id: 18, name: 'Dr IQ' },
-    { id: 19, name: 'Magma' },
-    { id: 20, name: 'Tornado' }
+    // { id: 1, name: "x"}
 ];
 
 export const heroesReducer = createReducer<Hero[]>(
-    initialState,
+    initialState, 
+    on(getHeroes, (state, action) => {
+        return [...action.heroes]
+    }),
     on(appendHero, (state, action) => state.concat({
         name: action.name,
         id: Math.max(...state.map(h => h.id), 0) + 1,
@@ -26,6 +21,12 @@ export const heroesReducer = createReducer<Hero[]>(
         newHeroes[newHeroes.findIndex(h => h.id === action.hero.id)] = action.hero
         return newHeroes
     }),
+    // on(editHero, (state, action) => {
+    //     const newHeroes = state.concat()
+    //     newHeroes[newHeroes.findIndex(h => h.id === action.heroId)] = action.hero
+    //     return newHeroes
+    // }),
+    // on(getHeroes, (state, action) => )
     on(deleteHero, (state, action) => state.filter(h => h.id !== action.heroId))
 )
 

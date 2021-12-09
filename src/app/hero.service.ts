@@ -3,7 +3,7 @@ import { Hero } from './hero';
 import { Observable, of } from 'rxjs';
 import { MessageService } from './message.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, tap, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -14,14 +14,13 @@ export class HeroService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
   constructor( private httpClient: HttpClient, private messageService: MessageService) { }  
-  
   /** Log a HeroService message with the MessageService */
   // private heroesUrl = 'api/heroes';  // URL to web api
+  // _baseUrl = 'http://localhost:3000/heroes'
   _baseUrl = 'api/heroes'
   private getCollectionUrl(){
     return this._baseUrl
   }
-
   private getElementUrl(elementId: any) {
     return this._baseUrl + '/' + encodeURIComponent(String(elementId))
   }
@@ -37,23 +36,20 @@ export class HeroService {
   //  */
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-
       // TODO: send the error to remote logging infrastructure
       console.error(error); // log to console instead
-
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
-
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };
   }
 
-  
-
   all() {
+    console.log('in all')
     return this.httpClient.get<Hero[]>(this.getCollectionUrl())
     .pipe(
+            map(((( data: Hero[] ) => data))),
             tap(_ => this.log('fetched heroes')),
             catchError(this.handleError<Hero[]>('getHeroes', []))
           );
@@ -68,7 +64,7 @@ export class HeroService {
   }
 
   replace(hero: Hero) {
-    return this.httpClient.put<Hero>(this.getElementUrl(hero.id), hero)
+    return this.httpClient.put<Hero>(this.getElementUrl(hero.id), hero, this.httpOptions)
     .pipe(
           tap(_ => this.log(`updated hero id=${hero.id}`)),
           catchError(this.handleError<any>('updateHero'))

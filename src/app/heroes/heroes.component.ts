@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { Hero } from '../hero';
 import { HeroService } from '../hero.service';
 import { MessageService } from '../message.service';
 import { AppState } from '../../app/app-state';
-import { appendHero, replaceHero, deleteHero, editHero, cancelHero } from '../store/heroes/heroes.actions';
+import { appendHero, replaceHero, deleteHero, editHero, cancelHero, getHeroes } from '../store/heroes/heroes.actions';
+import { Observable } from 'rxjs';
+import { uniqueHeroIds } from '../store/heroes/heroes.selector';
 
 
 @Component({
@@ -12,17 +14,29 @@ import { appendHero, replaceHero, deleteHero, editHero, cancelHero } from '../st
   templateUrl: './heroes.component.html',
   styleUrls: ['./heroes.component.css']
 })
-export class HeroesComponent {
+export class HeroesComponent implements OnInit {
 
-  heroes$ = this.store.pipe(select(state => state.heroes))
-  editHeroId$ = this.store.pipe(select('editHeroId'));
-  // heroes: Hero[] = [];
+  // heroes$: Hero[] = this.store.select(state => state.heroes)
+  heroes$: Hero[] = [];
 
-  constructor(private store: Store<AppState>, private messageService: MessageService) { }
+  constructor(private store: Store<AppState>, private messageService: MessageService, private heroService: HeroService) { }
+
+  ngOnInit(): void {
+    // this.store.dispatch(getHeroes() )
+    // this.getHeroes();
+    this.heroService.all().subscribe((data) => {
+      console.log('data', data)
+      this.store.dispatch(getHeroes({ heroes: data as Hero[]}))
+      // this.heroes$ = this.store.select(state => state.heroes)
+      // this.store.pipe(select(uniqueHeroIds))
+    });
+
+  }
 
   add(name: string) {
-    console.log(this.heroes$)
+    // console.log(this.heroes$)
     this.store.dispatch(appendHero({ name }))
+    this.heroService.append(name)
   }
 
   delete(heroId: number) {
@@ -35,7 +49,6 @@ export class HeroesComponent {
 
   // getHeroes(): void {
   //   this.heroService.all().subscribe(heroes => this.heroes = heroes);
-  //   this.store.dispatch(getHeroes())
   // }
 
   // add(name: string): void {
