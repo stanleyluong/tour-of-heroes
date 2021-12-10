@@ -4,6 +4,10 @@ import { Observable, of } from 'rxjs';
 import { MessageService } from './message.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, tap, map } from 'rxjs/operators';
+import { AppState } from "src/app/app-state";
+import { select, Store } from '@ngrx/store';
+import { selectHeroes } from './store/heroes/heroes.reducer';
+// import { state } from '@angular/animations';
 
 @Injectable({
   providedIn: 'root'
@@ -13,10 +17,11 @@ export class HeroService {
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
-  constructor( private httpClient: HttpClient, private messageService: MessageService) { }  
+  constructor( private httpClient: HttpClient, private messageService: MessageService, private store:Store<AppState>) { }  
   /** Log a HeroService message with the MessageService */
   // private heroesUrl = 'api/heroes';  // URL to web api
   _baseUrl = 'http://localhost:3000/heroes'
+  heroes$ = this.store.select(selectHeroes)
   // _baseUrl = 'api/heroes'
   private getCollectionUrl(){
     return this._baseUrl
@@ -55,13 +60,17 @@ export class HeroService {
           );
   }
 
-  append(name: string) {
-    console.log('appending', name)
-    return this.httpClient.post<Hero>(this.getCollectionUrl(), name)
-    .pipe(
-          tap((newHero: Hero) => this.log(`added hero w/ id=${newHero.id}`)),
-          catchError(this.handleError<Hero>('addHero'))
-        );
+  append(hero: Hero): Observable<Hero> {
+    console.log('appending', hero)
+    // console.log(typeof(hero.id))
+    // let id = Math.max(...this.heroes$.map(h => h.id)) + 1
+    // console.log('id',id)
+    // console.log('new hero', hero)
+    return this.httpClient.post<Hero>(this.getCollectionUrl(), hero, this.httpOptions) 
+    // .pipe(
+    //       tap((newHero: Hero) => this.log(`added hero w/ id=${newHero.id}`)),
+    //       catchError(this.handleError<Hero>('addHero'))
+    //     );
   }
 
   replace(hero: Hero) {
@@ -72,8 +81,9 @@ export class HeroService {
         );
   }
 
-  delete(heroId: number) {
-    return this.httpClient.delete<Hero>(this.getElementUrl(heroId))
+  delete(heroId: number): Observable<Hero> {
+    console.log('delete',this.getElementUrl(heroId))
+    return this.httpClient.delete<Hero>(this.getElementUrl(heroId), this.httpOptions)
     .pipe(
           tap(_ => this.log(`deleted hero id=${heroId}`)),
           catchError(this.handleError<Hero>('deleteHero'))

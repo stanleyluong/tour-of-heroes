@@ -24,17 +24,23 @@ heroes$ = this.store.select(selectHeroes)
 
   constructor(private store: Store<AppState>, private messageService: MessageService, private heroService: HeroService) { }
 
-  
-
   add(name: string) {
-    console.log('add in heroes component')
-    this.store.dispatch(appendHero({ name }))
-    this.heroService.append(name)
-    console.log('after')
+    console.log(this.store)
+    let newHero = {
+      name: name,
+      id: Math.random()
+    }
+    this.heroService.append(newHero).subscribe(hero => {
+      console.log('adding', hero)
+      this.store.dispatch(appendHero({hero}))
+    })
   }
 
   delete(heroId: number) {
     this.store.dispatch(deleteHero({ heroId }))
+    this.heroService.delete(heroId).subscribe(data => {
+      console.log('delete id',heroId)
+    })
   }
 
   // ngOnInit(): void {

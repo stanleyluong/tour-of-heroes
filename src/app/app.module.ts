@@ -35,10 +35,10 @@ import { counterReducer } from './store/counter/counter.reducer';
     // and returns simulated server responses.
     // Remove it when a real server is ready to receive requests.
     HttpClientModule,
-    HttpClientInMemoryWebApiModule.forRoot(
-      InMemoryDataService, { dataEncapsulation: false }
-    ),
-    HttpClientInMemoryWebApiModule,
+    // HttpClientInMemoryWebApiModule.forRoot(
+    //   InMemoryDataService, { dataEncapsulation: false }
+    // ),
+    // HttpClientInMemoryWebApiModule,
     BrowserModule,
     FormsModule,
     AppRoutingModule,

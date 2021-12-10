@@ -15,10 +15,11 @@ export const heroesReducer = createReducer<Hero[]>(
     on(setHeroesAction, (state, action) => {
         return [...action.heroes]
     }),
-    on(appendHero, (state, action) => state.concat({
-        name: action.name,
-        id: Math.max(...state.map(h => h.id), 0) + 1,
-    })),
+    // on(appendHero, (state, action) => state.concat({
+    //     name: action.name,
+    //     id: Math.max(...state.map(h => h.id)) + 1,
+    // })),
+    on(appendHero, (state, action) => state.concat(action.hero)),
     on(replaceHero, (state, action) => {
         const newHeroes = state.concat()
         newHeroes[newHeroes.findIndex(h => h.id === action.hero.id)] = action.hero
