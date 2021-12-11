@@ -1,37 +1,34 @@
-import { createReducer, createSelector, on } from "@ngrx/store";
-import { appendHero, replaceHero, deleteHero, editHero, cancelHero, setHeroesAction } from './heroes.actions'
+import { createReducer, on } from "@ngrx/store";
+import { appendHero, deleteHero, replaceHero, editHero, cancelHero, loadHeroesSuccess } from './heroes.actions'
 import { Hero } from "src/app/hero";
-import { HeroService } from '../../hero.service'; 
 import { AppState } from "src/app/app-state";
 
-export const initialState: Hero[] = [
-    // { id: 1, name: "x"}
-];
+export const initialState: Hero[] = []
 //reducers to update state, selectors to get state, actions dispatched to tell system you want ot do something with action
 export const heroesReducer = createReducer<Hero[]>(
     initialState, 
     //ambiguous, getHeroesAction
     //setHeroes?
-    on(setHeroesAction, (state, action) => {
+    on(loadHeroesSuccess, (state, action) => {
         return [...action.heroes]
     }),
-    // on(appendHero, (state, action) => state.concat({
-    //     name: action.name,
-    //     id: Math.max(...state.map(h => h.id)) + 1,
-    // })),
     on(appendHero, (state, action) => state.concat(action.hero)),
+    on(deleteHero, (state, action) => state.filter(h => h.id !== action.heroId)),
     on(replaceHero, (state, action) => {
         const newHeroes = state.concat()
         newHeroes[newHeroes.findIndex(h => h.id === action.hero.id)] = action.hero
         return newHeroes
     }),
+    // on(appendHero, (state, action) => state.concat({
+    //     name: action.name,
+    //     id: Math.max(...state.map(h => h.id)) + 1,
+    // })),
     // on(editHero, (state, action) => {
     //     const newHeroes = state.concat()
     //     newHeroes[newHeroes.findIndex(h => h.id === action.heroId)] = action.hero
     //     return newHeroes
     // }),
     // on(getHeroes, (state, action) => )
-    on(deleteHero, (state, action) => state.filter(h => h.id !== action.heroId))
 )
 
 export const editHeroIdReducer = createReducer<number>(-1,

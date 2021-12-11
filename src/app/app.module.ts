@@ -20,6 +20,7 @@ import { HeroService } from './hero.service';
 import { CounterComponent } from './counter/counter.component'
 import { editHeroIdReducer, heroesReducer } from './store/heroes/heroes.reducer';
 import { counterReducer } from './store/counter/counter.reducer';
+import { HeroEffects } from './store/heroes/heroes.effects';
 @NgModule({
   declarations: [
     AppComponent,
@@ -50,6 +51,7 @@ import { counterReducer } from './store/counter/counter.reducer';
       count: counterReducer
     }),
     StoreDevtoolsModule.instrument({ }),
+    EffectsModule.forRoot([HeroEffects])
   ],
   providers: [HeroService],
   bootstrap: [AppComponent]

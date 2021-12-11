@@ -67,10 +67,10 @@ export class HeroService {
     // console.log('id',id)
     // console.log('new hero', hero)
     return this.httpClient.post<Hero>(this.getCollectionUrl(), hero, this.httpOptions) 
-    // .pipe(
-    //       tap((newHero: Hero) => this.log(`added hero w/ id=${newHero.id}`)),
-    //       catchError(this.handleError<Hero>('addHero'))
-    //     );
+    .pipe(
+          tap((newHero: Hero) => this.log(`added hero w/ id=${newHero.id}`)),
+          catchError(this.handleError<Hero>('addHero'))
+        );
   }
 
   replace(hero: Hero) {

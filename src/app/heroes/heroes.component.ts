@@ -1,12 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { Store, select } from '@ngrx/store';
+import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Hero } from '../hero';
 import { HeroService } from '../hero.service';
 import { MessageService } from '../message.service';
 import { AppState } from '../../app/app-state';
-import { appendHero, replaceHero, deleteHero, editHero, cancelHero, setHeroesAction } from '../store/heroes/heroes.actions';
+import { appendHero, deleteHero } from '../store/heroes/heroes.actions';
 import { Observable } from 'rxjs';
-import { uniqueHeroIds } from '../store/heroes/heroes.selector';
 import { selectHeroes } from '../store/heroes/heroes.reducer';
 
 
@@ -16,7 +15,7 @@ import { selectHeroes } from '../store/heroes/heroes.reducer';
   styleUrls: ['./heroes.component.css']
 })
 export class HeroesComponent {
-heroes$ = this.store.select(selectHeroes)
+heroes$: Observable<Hero[]> = this.store.select(selectHeroes)
 //abstract to selector^
   // heroes$ = this.store.select(state => state.heroes)
   // heroes$: Hero[] = [];
@@ -25,10 +24,9 @@ heroes$ = this.store.select(selectHeroes)
   constructor(private store: Store<AppState>, private messageService: MessageService, private heroService: HeroService) { }
 
   add(name: string) {
-    console.log(this.store)
     let newHero = {
-      name: name,
-      id: Math.random()
+      id: Math.random(),
+      name: name
     }
     this.heroService.append(newHero).subscribe(hero => {
       console.log('adding', hero)
