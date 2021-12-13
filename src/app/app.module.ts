@@ -8,19 +8,16 @@ import { MessagesComponent } from './messages/messages.component';
 import { AppRoutingModule } from './app-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HttpClientModule } from '@angular/common/http';
-import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
-import { InMemoryDataService } from './in-memory-data.service';
 import { HeroSearchComponent } from './hero-search/hero-search.component';
 import { StoreModule } from '@ngrx/store';
-import { reducers, metaReducers } from './store'
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-// import { environment } from '../environments/environment';
 import { HeroService } from './hero.service';
 import { CounterComponent } from './counter/counter.component'
-import { editHeroIdReducer, heroesReducer } from './store/heroes/heroes.reducer';
+import { heroesReducer } from './store/heroes/heroes.reducer';
 import { counterReducer } from './store/counter/counter.reducer';
 import { HeroEffects } from './store/heroes/heroes.effects';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -32,22 +29,13 @@ import { HeroEffects } from './store/heroes/heroes.effects';
     CounterComponent
   ],
   imports: [
-    // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
-    // and returns simulated server responses.
-    // Remove it when a real server is ready to receive requests.
     HttpClientModule,
-    // HttpClientInMemoryWebApiModule.forRoot(
-    //   InMemoryDataService, { dataEncapsulation: false }
-    // ),
-    // HttpClientInMemoryWebApiModule,
     BrowserModule,
     FormsModule,
     AppRoutingModule,
     EffectsModule.forRoot([]),
-    // StoreModule.forRoot(reducers, { metaReducers }),
     StoreModule.forRoot({
       heroes: heroesReducer,
-      editHeroId: editHeroIdReducer,
       count: counterReducer
     }),
     StoreDevtoolsModule.instrument({ }),
@@ -56,4 +44,5 @@ import { HeroEffects } from './store/heroes/heroes.effects';
   providers: [HeroService],
   bootstrap: [AppComponent]
 })
+
 export class AppModule { }

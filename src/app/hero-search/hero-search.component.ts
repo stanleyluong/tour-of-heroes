@@ -3,10 +3,9 @@ import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { Hero } from '../hero';
 import { HeroService } from '../hero.service';
-import { Store, select } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { AppState } from '../app-state';
-import { selectHeroes } from '../store/heroes/heroes.reducer';
-
+import { searchHeroes } from '../store/heroes/heroes.actions';
 @Component({
   selector: 'app-hero-search',
   templateUrl: './hero-search.component.html',
@@ -14,27 +13,23 @@ import { selectHeroes } from '../store/heroes/heroes.reducer';
 })
 export class HeroSearchComponent implements OnInit {
   heroes$!: Observable<Hero[]>;
-// heroes$ = this.store.select(selectHeroes)
 
   private searchTerms = new Subject<string>();
 
   constructor(private heroService: HeroService, private store:Store<AppState>) {}
 
-  // Push a search term into the observable stream.
   search(term: string): void {
     this.searchTerms.next(term);
   }
 
   ngOnInit(): void {
     this.heroes$ = this.searchTerms.pipe(
-      // wait 300ms after each keystroke before considering the term
       debounceTime(300),
-
-      // ignore new term if same as previous term
       distinctUntilChanged(),
-
-      // switch to new search observable each time the term changes
       switchMap((term: string) => this.heroService.searchHeroes(term)),
+      // switchMap((term: string) => this.store.dispatch(searchHeroes(term)),
     );
   }
 }
+
+//only returns exact name, fix it so it returns all heroes beginning with beginning with letters
