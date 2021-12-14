@@ -23,6 +23,7 @@ export class HeroDetailComponent {
   hero: Hero | undefined;
   
   heroes$ = this.store.pipe(select(selectHeroes))
+  // pipe takes comma separated list of rxjs operators
   hero$ = combineLatest([this.heroId$, this.heroes$]).pipe(
     map(([heroId, heroes]) => {
       return heroes.find(hero => hero.id == heroId)

@@ -3,7 +3,7 @@ import { Hero } from './hero';
 import { Observable, of } from 'rxjs';
 import { MessageService } from './message.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, tap, map } from 'rxjs/operators';
+import { catchError, tap, map, switchMap, take } from 'rxjs/operators';
 import { AppState } from "src/app/app-state";
 import { Store } from '@ngrx/store';
 import { selectHeroes } from './store/heroes/heroes.reducer';
@@ -22,7 +22,13 @@ export class HeroService {
  
   _baseUrl = 'http://localhost:3000/heroes'
 
-  heroes$ = this.store.select(selectHeroes)
+  heroes$ = this.store.select(selectHeroes)//take stream and not do anything
+
+  //take stream and do something
+  // maxId$ = this.heroes$.pipe(
+  //   map((heroes) => {
+  //   return Math.max(...heroes.map(h => h.id)) + 1
+  // }))
 
   private getCollectionUrl(){
     return this._baseUrl
@@ -51,16 +57,25 @@ export class HeroService {
             catchError(this.handleError<Hero[]>('getHeroes', []))
           );
   }
-
+//obeserables= stream of notifcations, 
+//tap = tap into it to do something with value without manipulating stream
   append(name: string): Observable<Hero> {
-    // let id = Math.max(...this.heroes$.map(h => h.id)) + 1
-    let hero = {id: Math.random(), name: name }
-    return this.httpClient.post<Hero>(this.getCollectionUrl(), hero, this.httpOptions) 
-    .pipe(
+    return this.heroes$.pipe(
+      take(1),
+      map((heroes) => {
+        return Math.max(...heroes.map(h => h.id)) + 1
+      }),
+      switchMap((maxId) => {
+        let hero = {id: maxId, name: name }
+        return this.httpClient.post<Hero>(this.getCollectionUrl(), hero, this.httpOptions) 
+        .pipe(
           tap((newHero: Hero) => this.log(`added hero w/ id=${newHero.id}`)),
           catchError(this.handleError<Hero>('addHero'))
-        );
+          );
+        })
+    )
   }
+  //^instead of using map, which takes value
 
   replace(hero: Hero) {
     return this.httpClient.put<Hero>(this.getElementUrl(hero.id), hero, this.httpOptions)
@@ -80,6 +95,7 @@ export class HeroService {
   }
 
   searchHeroes(term: string): Observable<Hero[]> {
+    //change to search state instead, get rid of backend api for this
       if (!term.trim()) {
         return of([]);
       }
