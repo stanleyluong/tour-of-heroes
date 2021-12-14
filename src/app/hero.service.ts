@@ -22,13 +22,7 @@ export class HeroService {
  
   _baseUrl = 'http://localhost:3000/heroes'
 
-  heroes$ = this.store.select(selectHeroes)//take stream and not do anything
-
-  //take stream and do something
-  // maxId$ = this.heroes$.pipe(
-  //   map((heroes) => {
-  //   return Math.max(...heroes.map(h => h.id)) + 1
-  // }))
+  heroes$ = this.store.select(selectHeroes)
 
   private getCollectionUrl(){
     return this._baseUrl
@@ -57,8 +51,7 @@ export class HeroService {
             catchError(this.handleError<Hero[]>('getHeroes', []))
           );
   }
-//obeserables= stream of notifcations, 
-//tap = tap into it to do something with value without manipulating stream
+
   append(name: string): Observable<Hero> {
     return this.heroes$.pipe(
       take(1),
@@ -75,7 +68,6 @@ export class HeroService {
         })
     )
   }
-  //^instead of using map, which takes value
 
   replace(hero: Hero) {
     return this.httpClient.put<Hero>(this.getElementUrl(hero.id), hero, this.httpOptions)
@@ -93,18 +85,5 @@ export class HeroService {
           catchError(this.handleError<Hero>('deleteHero'))
         );
   }
-
-  searchHeroes(term: string): Observable<Hero[]> {
-    //change to search state instead, get rid of backend api for this
-      if (!term.trim()) {
-        return of([]);
-      }
-      return this.httpClient.get<Hero[]>(`${this._baseUrl}/?name=${term}`).pipe(
-        tap(x => x.length ?
-          this.log(`found heroes matching "${term}"`) :
-          this.log(`no heroes matching "${term}"`)),
-        catchError(this.handleError<Hero[]>('searchHeroes', []))
-      );
-    }
   
 }
