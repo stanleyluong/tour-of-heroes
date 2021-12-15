@@ -20,7 +20,7 @@ export class HeroService {
 
   constructor( private httpClient: HttpClient, private messageService: MessageService, private store:Store<AppState>) { }  
  
-  _baseUrl = 'http://localhost:3000/heroes'
+  _baseUrl = 'https://tour-of-heroes-server.herokuapp.com/heroes'
 
   heroes$ = this.store.select(selectHeroes)
 
@@ -78,7 +78,6 @@ export class HeroService {
   }
 
   delete(heroId: number): Observable<Hero> {
-    console.log('delete',this.getElementUrl(heroId))
     return this.httpClient.delete<Hero>(this.getElementUrl(heroId), this.httpOptions)
     .pipe(
           tap(_ => this.log(`deleted hero id=${heroId}`)),
